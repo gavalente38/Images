@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ee8738">
+  <meta name="description" content="Um scrapbook de aniversário, feito de lembranças e carinho.">
+  <title>Feliz aniversário ♡</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='5' width='44' height='54' rx='5' fill='%23ee8738'/%3E%3Cpath d='M17 5v54' stroke='%2342694e' stroke-width='9'/%3E%3Crect x='26' y='18' width='21' height='27' rx='2' fill='%23fffaf0'/%3E%3Cpath d='M30 26h13M30 32h13M30 38h8' stroke='%23bc602f' stroke-width='2'/%3E%3C/svg%3E">
+  <style>
+    :root { --paper:#fffaf0; --background:#fff5e7; --ink:#354039; --muted:#6c7264; --orange:#bd501b; --red:var(--orange); --green:#42694e; --blue:#d6eaf1; --line:#d7d8c6; --serif:Georgia,'Times New Roman',serif; --hand:'Noteworthy','Segoe Print','Bradley Hand','Comic Sans MS',cursive; }
+    
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--background); color:var(--ink); font:16px/1.6 var(--serif); overflow-x:hidden; }
+    .scenery { position:fixed; inset:0; z-index:-2; pointer-events:none; background-color:var(--background); background-image:url("assets/decoracao-01.png"); background-size:400px 360px; background-repeat:repeat; }
+    button { font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    button:focus-visible,a:focus-visible { outline:3px solid var(--green); outline-offset:7px; }
+    button:disabled { cursor:default; }
+    [hidden] { display:none !important; }
+    .topbar { position:absolute; top:0; left:0; width:100%; padding:25px 38px; display:flex; justify-content:flex-end; z-index:20; }
+    .sound { min-height:44px; display:flex; gap:9px; align-items:center; border:1px solid #a9bba5; border-radius:30px; padding:8px 16px; font:14px/1.4 var(--serif); background:#fffaf0d9; }
+    .sound svg { width:16px; height:16px; }
+    .sound[aria-pressed=true] { color:var(--green); border-color:#718d6a; }
+    .welcome { min-height:100svh; padding:90px 24px 65px; display:flex; align-items:center; justify-content:center; text-align:center; position:relative; }
+    .eyebrow { margin:0; font:12px/1.6 Arial,sans-serif; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); }
+    .album-area { position:relative; width:min(640px,100%); margin:15px 0; padding:16px 0; perspective:1600px; }
+    .album { position:relative; display:block; width:min(420px,82%); aspect-ratio:.81; margin:0 auto; padding:0; border:0; background:transparent; transform:rotate(-3deg); text-align:left; transition:transform .35s; }
+    .album:hover { transform:rotate(-1.5deg) translateY(-4px); }
+    .album-pages { position:absolute; inset:6px -8px -4px 5px; border:1px solid #d1cfb9; border-radius:2px 9px 9px 2px; background:repeating-linear-gradient(0deg,#fffcf2 0 3px,#e3dfcd 3px 4px); box-shadow:3px 5px 0 #ded9c4,5px 9px 0 #fff8e6,0 22px 36px -16px #4b513866; }
+    .album-inside { position:absolute; inset:8px 7px 7px 9px; display:flex; align-items:center; justify-content:center; background:var(--paper); color:var(--green); text-align:center; font:italic 35px/1.4 var(--serif); padding:30px; }
+    .album-inside span { max-width:270px; }
+    .album-cover { position:absolute; inset:0; border:1px solid #cb6528; border-radius:2px 7px 7px 2px; transform-origin:3% center; transform-style:preserve-3d; backface-visibility:hidden; background-color:#ee8738; background-image:repeating-linear-gradient(0deg,#fff1 0 1px,transparent 1px 4px),repeating-linear-gradient(90deg,#6f2e1509 0 1px,transparent 1px 4px); box-shadow:inset 0 0 22px #7a351315,2px 3px 9px #6e492826; transition:transform 1.25s cubic-bezier(.3,.05,.3,1),box-shadow 1.25s; }
+    .album-cover::before { content:''; position:absolute; inset:13px 13px 13px 30px; border:1px dashed #f7e4c5aa; border-radius:3px; pointer-events:none; }
+    .album-spine { position:absolute; inset:0 auto 0 0; width:26px; background:linear-gradient(90deg,#345940,#67805a,#3f664b); border-right:2px solid #234b3233; box-shadow:3px 0 5px #46342322; z-index:5; }
+    .binding { position:absolute; left:-14px; width:32px; height:12px; border:3px solid #9a9f80; border-left-color:#eef0d7; border-top-color:#d7d9b5; border-radius:50%; z-index:8; box-shadow:0 2px 2px #263e3830; }
+    .binding.one { top:15%; } .binding.two { top:38%; } .binding.three { top:61%; } .binding.four { top:84%; }
+    .cover-title { position:absolute; top:70px; left:53px; right:30px; padding:22px 12px 25px; background:#fff9e9; color:var(--green); font:normal 43px/1.38 var(--hand); letter-spacing:-1.5px; text-align:center; transform:rotate(-3deg); box-shadow:2px 4px 3px #6d4a2724; }
+    .cover-title em { color:var(--orange); font-style:normal; }
+    .cover-photo { position:absolute; width:166px; right:33px; bottom:54px; padding:9px 9px 20px; background:#fffdf6; transform:rotate(7deg); box-shadow:2px 5px 7px #5b422d35; }
+    .cover-photo::before { content:''; position:absolute; width:63px; height:22px; top:-10px; left:40px; background:#dceccba1; transform:rotate(-3deg); border-left:1px dashed #fcf9e8; border-right:1px dashed #fcf9e8; }
+    .cover-photo img { display:block; width:100%; height:auto; aspect-ratio:1; object-fit:cover; }
+    .cover-sticker { position:absolute; top:auto; bottom:52px; left:53px; right:auto; width:146px; height:183px; z-index:6; transform:rotate(-8deg); }
+    .opening .album-cover { transform:rotateY(-110deg); box-shadow:20px 10px 35px #394f292b; }
+    .opening .album { pointer-events:none; animation:album-exit .7s 1.1s forwards; }
+    @keyframes album-exit { to { transform:translateY(12px) rotate(0) scale(1.07); opacity:0; } }
+    .scrapbook { width:min(1190px,calc(100% - 72px)); margin:105px auto 42px; padding:42px 68px 38px; position:relative; background:var(--paper); border:1px solid #e3dbc2; box-shadow:0 12px 45px #33432b18,3px 4px 0 #e7e4d1,6px 9px 0 #fcf9e7; }
+    .scrapbook::before,.scrapbook::after { content:''; position:absolute; width:120px; height:31px; top:-12px; background:#edaa6484; border-left:1px dashed #fff4e4; border-right:1px dashed #fff4e4; pointer-events:none; }
+    .scrapbook::before { left:57px; transform:rotate(-9deg); } .scrapbook::after { right:58px; transform:rotate(7deg); }
+    .paper-topline { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+    .paper-topline p { margin:0; font:12px/1.5 Arial,sans-serif; letter-spacing:1.5px; color:var(--muted); }
+    .paper-topline p span { color:var(--orange); margin-right:6px; }
+    .fold-button { font:14px var(--serif); padding:8px 0 8px 12px; border:0; background:transparent; color:var(--green); }
+    .poster-header { text-align:center; position:relative; padding:47px 0 38px; }
+    .poster-header h2 { color:var(--orange); font:italic normal clamp(86px,12vw,146px)/.96 var(--serif); letter-spacing:-8px; margin:22px 0 24px; outline:none; }
+    .poster-header .dedication { max-width:490px; margin:0 auto; color:var(--muted); font-size:20px; line-height:1.8; }
+    .happy-label { position:absolute; left:2%; top:123px; background:var(--green); color:#fff9e9; padding:9px 16px; transform:rotate(-9deg); font:17px/1.6 var(--hand); box-shadow:2px 3px 0 #304a3520; }
+    .header-sticker { position:absolute; right:0; top:81px; width:140px; height:140px; transform:rotate(9deg); }
+    .character-sticker { display:block; background-repeat:no-repeat; background-size:contain; background-position:center; pointer-events:none; filter:drop-shadow(1px 3px 2px #2b342128); }
+    .ghibli-totoro { background-image:url("assets/decoracao-02.png"); }
+    .ghibli-calcifer { background-image:url("assets/decoracao-03.png"); }
+    .ghibli-mini { background-image:url("assets/decoracao-04.png"); }
+    .ghibli-turnip { background-image:url("assets/decoracao-05.png"); }
+    .gallery-section { padding:22px 0 42px; border-top:1px dashed #c3ceba; }
+    .gallery-heading { text-align:center; margin:0 0 55px; }
+    .gallery-heading h3 { font:italic normal 42px/1.3 var(--serif); color:var(--orange); margin:12px 0 8px; letter-spacing:-1px; }
+    .gallery-heading p { margin:0; font-size:17px; color:var(--muted); }
+    .gallery-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); column-gap:30px; row-gap:64px; padding:0 5px 12px; }
+    .memory { position:relative; min-width:0; margin:0; }
+    .memory:nth-child(2n) { padding-top:23px; }
+    .polaroid { position:relative; padding:11px 11px 14px; background:#fffef9; box-shadow:1px 5px 10px #34412a23; border:1px solid #e1e4d5; margin:0; width:100%; display:block; text-align:center; transform:rotate(-4deg); transition:transform .3s,box-shadow .3s; }
+    button.polaroid:hover { transform:rotate(-1deg) translateY(-5px); box-shadow:1px 10px 18px #34412a30; }
+    .memory:nth-child(2n) .polaroid { transform:rotate(4deg); }
+    .memory:nth-child(2n) button.polaroid:hover { transform:rotate(1deg) translateY(-5px); }
+    .polaroid::before { content:''; position:absolute; top:-12px; left:calc(50% - 32px); width:64px; height:25px; transform:rotate(3deg); background:#efaa638c; border-left:1px dashed #faf5e8; border-right:1px dashed #faf5e8; z-index:1; }
+    .memory:nth-child(3n) .polaroid::before { background:#c1dbce8c; }
+    .memory:nth-child(4n) .polaroid::before { background:#bedee88c; }
+    .polaroid img { width:100%; height:auto; aspect-ratio:1; object-fit:cover; display:block; background:var(--blue); }
+    .polaroid .caption { display:block; font:17px/1.55 var(--hand); padding:11px 0 1px; }
+    .sample-label { display:block; font:12px/1.6 Arial,sans-serif; color:#767b6d; letter-spacing:.2px; margin-top:2px; }
+    .photo-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; aspect-ratio:1; background:#e2edf0; padding:10px; color:#587886; text-align:center; border:1px dashed #b2cbd2; }
+    .memory:nth-child(3n) .photo-placeholder { background:#e3ebd6; border-color:#b9c9a7; color:#607448; }
+    .memory:nth-child(4n) .photo-placeholder { background:#f6e4cd; border-color:#e0c7a2; color:#986c42; }
+    .photo-placeholder .photo-number { font:12px Arial,sans-serif; letter-spacing:2px; margin-bottom:8px; opacity:.75; }
+    .photo-placeholder .photo-mark { font:32px/1.3 var(--serif); margin-bottom:7px; }
+    .photo-placeholder .photo-label { font:17px/1.5 var(--hand); }
+    .photo-sticker { position:absolute; width:83px; height:83px; top:-39px; right:-22px; z-index:4; transform:rotate(8deg); }
+    .memory:nth-child(2n) .photo-sticker { top:-14px; right:-21px; transform:rotate(-6deg); }
+    .memory:nth-child(3n) .photo-sticker { top:-24px; right:auto; bottom:auto; left:-28px; transform:rotate(-8deg); }
+    .memory:nth-child(4n) .photo-sticker { bottom:auto; top:-8px; right:-25px; left:auto; transform:rotate(8deg); }
+    .memory-note { max-width:570px; margin:42px auto 17px; padding:25px 35px; background:#deebf0; box-shadow:2px 5px 8px #314b4016; transform:rotate(-2deg); position:relative; text-align:center; }
+    .memory-note::before { content:''; position:absolute; top:-11px; right:calc(50% - 37px); width:74px; height:24px; background:#bdd5b58c; transform:rotate(5deg); }
+    .memory-note h3 { color:var(--green); font:22px/1.5 var(--hand); font-weight:normal; margin:0 0 9px; }
+    .memory-note p { margin:0; font:21px/1.75 var(--hand); color:#426574; }
+    .memory-note .little-heart { color:var(--orange); font-size:26px; margin-left:8px; }
+    .letter-section { border-top:1px dashed #c3ceba; padding:55px 47px 36px; position:relative; min-height:750px; }
+    .letter-section::before { content:''; position:absolute; top:110px; bottom:55px; left:21px; border-left:1px solid #df80378c; }
+    .letter-section .letter-to { margin:0 0 27px; color:var(--green); font:31px/1.5 var(--hand); }
+    .letter-copy { max-width:870px; font-size:20px; line-height:1.95; overflow-wrap:anywhere; }
+    .letter-copy p { margin:0 0 25px; }
+    .letter-copy em { color:var(--orange); }
+    .signature { margin:33px 0 0; font:26px/1.6 var(--hand); color:var(--green); transform:rotate(-3deg); transform-origin:left; }
+    .signature span { display:block; font-size:18px; color:var(--muted); }
+    .letter-margin { position:absolute; top:155px; right:-25px; writing-mode:vertical-rl; color:var(--muted); font:14px var(--hand); transform:rotate(3deg); }
+    .wish-section { text-align:center; padding:25px 0 36px; }
+    .wish-button { padding:13px 27px; background:var(--orange); border:1px solid var(--orange); color:#fffaf0; border-radius:3px; font-size:16px; box-shadow:3px 4px 0 #bc501b20; transition:transform .2s; }
+    .wish-button:hover { transform:translateY(-3px) rotate(-1deg); }
+    .wish-button span { margin-right:9px; font-size:19px; color:#ffdd9c; }
+    .wish-ticket { max-width:630px; margin:24px auto 0; border:1px dashed #d4a67a; background:#f8e7cf; padding:26px 20px; transform:rotate(-2deg); animation:ticket-in .5s both; }
+    .wish-ticket p { margin:0; color:var(--orange); font:italic 28px/1.5 var(--serif); }
+    .wish-ticket small { display:block; margin-top:10px; font-size:15px; color:var(--muted); }
+    .paper-footer { border-top:1px solid var(--line); padding-top:21px; display:flex; align-items:center; justify-content:space-between; gap:15px; color:var(--muted); font-size:13px; }
+    .paper-footer .footer-heart { color:var(--orange); font-size:23px; line-height:1; }
+    .unfold { animation:paper-in .75s both; transform-origin:top center; }
+    .unfold .gallery-section { animation:fold-in .7s .18s both; transform-origin:top; }
+    @keyframes paper-in { from { opacity:0; transform:translateY(35px) scale(.96); } to { opacity:1; transform:none; } }
+    @keyframes fold-in { from { opacity:0; transform:perspective(1600px) rotateX(-18deg) translateY(-12px); } to { opacity:1; transform:none; } }
+    @keyframes ticket-in { from { opacity:0; transform:translateY(-15px) rotate(0); } to { opacity:1; transform:rotate(-2deg); } }
+    .page-footer { text-align:center; padding:0 20px 38px; color:var(--green); font:italic 14px var(--serif); }
+    .photo-dialog { width:min(720px,calc(100% - 32px)); max-height:90svh; padding:20px; border:1px solid #d4dec7; background:var(--paper); color:var(--ink); box-shadow:0 20px 100px #1d281540; }
+    .photo-dialog::backdrop { background:#273529c9; backdrop-filter:blur(5px); }
+    .dialog-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:15px; }
+    .dialog-top h3 { margin:0; font:22px/1.5 var(--hand); }
+    .close-photo { border:0; background:transparent; min-height:44px; min-width:44px; font-size:28px; }
+    .photo-dialog img { display:block; width:100%; max-height:68svh; object-fit:contain; }
+    .confetti { position:fixed; inset:0; width:100%; height:100%; z-index:30; pointer-events:none; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width:1050px) { .scrapbook { padding:38px 46px; } .gallery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:42px; row-gap:67px; padding:0 20px; } .photo-sticker { width:100px; height:100px; } .letter-section { padding:48px 28px 32px; } .letter-section::before { left:9px; } }
+    @media (max-width:800px) { .scrapbook { width:calc(100% - 38px); padding:35px 32px; } .poster-header h2 { font-size:116px; } .happy-label { left:-10px; top:170px; font-size:14px; } .header-sticker { width:110px; height:110px; top:90px; right:-15px; } .letter-margin { display:none; } }
+    @media (max-width:500px) {
+      .topbar { padding:18px 20px; } .sound { padding:8px 12px; font-size:13px; }
+      .welcome { padding:100px 15px 25px; } .album-area { margin:20px 0 21px; } .album { width:min(305px,90%); } .album-spine { width:21px; }
+      .album-cover::before { inset:11px 11px 11px 26px; } .cover-title { top:67px; left:36px; right:19px; font-size:32px; padding:18px 9px; letter-spacing:-1.2px; }
+      .cover-photo { width:123px; right:22px; bottom:23px; padding:7px 7px 25px; } .cover-photo::before { width:50px; left:30px; }
+      .cover-sticker { width:88px; height:88px; top:-17px; right:-12px; } .binding { width:27px; left:-12px; height:11px; border-width:2px; }
+      .scrapbook { margin-top:90px; width:calc(100% - 22px); padding:28px 21px; } .scrapbook::before { left:24px; width:80px; } .scrapbook::after { right:24px; width:80px; }
+      .paper-topline p { font-size:11px; letter-spacing:.7px; } .fold-button { font-size:13px; white-space:nowrap; } .poster-header { padding:34px 0 30px; }
+      .poster-header .eyebrow { font-size:12px; letter-spacing:1.5px; } .poster-header h2 { font-size:99px; letter-spacing:-6px; margin-top:27px; }
+      .poster-header .dedication { font-size:17px; padding:0 4px; } .header-sticker { width:83px; height:83px; top:122px; right:-18px; } .happy-label { top:177px; left:-13px; padding:5px 9px; font-size:12px; }
+      .gallery-section { padding-top:22px; } .gallery-heading { margin-bottom:49px; } .gallery-heading h3 { font-size:35px; } .gallery-heading .eyebrow { font-size:11px; letter-spacing:1.3px; } .gallery-heading p { font-size:16px; }
+      .gallery-grid { gap:44px 19px; padding:0 2px; } .memory:nth-child(2n) { padding-top:18px; } .polaroid { padding:7px 7px 10px; } .polaroid .caption { font-size:14px; padding-top:9px; } .sample-label { font-size:11px; }
+      .photo-placeholder { padding:6px; } .photo-placeholder .photo-mark { font-size:25px; margin-bottom:3px; } .photo-placeholder .photo-label { font-size:14px; } .photo-placeholder .photo-number { font-size:11px; margin-bottom:3px; }
+      .photo-sticker { width:61px; height:61px; top:-26px; right:-14px; } .memory:nth-child(2n) .photo-sticker { top:-8px; right:-12px; } .memory:nth-child(3n) .photo-sticker { top:-18px; left:-15px; bottom:auto; } .memory:nth-child(4n) .photo-sticker { top:-5px; right:-15px; bottom:auto; }
+      .memory-note { padding:24px 21px; margin-top:32px; } .memory-note h3 { font-size:20px; } .memory-note p { font-size:18px; }
+      .letter-section { padding:38px 8px 27px; } .letter-section::before { display:none; } .letter-section .letter-to { font-size:26px; } .letter-copy { font-size:18px; line-height:1.9; } .letter-copy p { margin-bottom:23px; }
+      .signature { font-size:24px; } .wish-ticket p { font-size:25px; } .paper-footer { font-size:12px; flex-wrap:wrap; justify-content:center; } .paper-footer .footer-heart { flex:0 0 20px; }
+    }
+
+    .cover-title::before { content:''; position:absolute; top:-11px; left:27px; width:72px; height:23px; background:#badbe8b3; transform:rotate(7deg); border-left:1px dashed #f8fcfb; border-right:1px dashed #f8fcfb; }
+    .cover-title::after { content:''; position:absolute; bottom:-10px; right:28px; width:62px; height:21px; background:#c7dab8a3; transform:rotate(-5deg); border-left:1px dashed #fffbea; border-right:1px dashed #fffbea; }
+    @media (max-height:780px) and (min-width:501px) {
+      .welcome { padding-top:80px; padding-bottom:40px; }
+      .album-area { margin:0; } .album { width:340px; }
+      .cover-title { top:55px; left:44px; right:25px; font-size:35px; padding:18px 10px 20px; }
+      .cover-photo { width:134px; right:27px; bottom:41px; }
+      .cover-sticker { width:115px; height:147px; left:43px; bottom:43px; }
+    }
+    @media (max-width:500px) {
+      .welcome { padding:85px 15px 55px; }
+      .album-area { margin:0; } .album { width:min(305px,90%); }
+      .cover-title { top:48px; left:39px; right:22px; padding:16px 8px 18px; font-size:31px; letter-spacing:-1px; }
+      .cover-title::before { width:53px; height:20px; left:20px; }
+      .cover-title::after { width:45px; height:18px; right:23px; }
+      .cover-photo { width:121px; right:23px; bottom:39px; padding:7px 7px 15px; }
+      .cover-sticker { width:104px; height:138px; bottom:36px; left:38px; right:auto; top:auto; }
+    }
+    @media (max-width:360px) {
+      .cover-title { top:42px; left:36px; right:20px; font-size:28px; }
+      .cover-photo { width:108px; right:21px; bottom:32px; }
+      .cover-sticker { width:94px; height:121px; bottom:33px; left:36px; }
+    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms !important; animation-delay:0ms !important; transition-duration:.01ms !important; transition-delay:0ms !important; } }
+
+    /* Todas as pessoas ficam visíveis, inclusive nas fotos em grupo. */
+    .polaroid img, .cover-photo img { object-fit:contain; background:#f4f0e6; }
+    .gallery-grid .polaroid { padding-bottom:32px; }
+
+    /* O novo título e a carta longa se adaptam ao espaço disponível. */
+    .paper-topline { justify-content:flex-end; }
+    .poster-header h2 { font-size:clamp(44px,8vw,104px); line-height:1.08; letter-spacing:-.04em; margin:20px 0 24px; }
+    .header-sticker { top:3px; right:0; width:85px; height:85px; }
+    .poster-header .dedication { max-width:650px; }
+    .gallery-heading h3 { max-width:800px; margin:12px auto 8px; }
+    .memory-note p { overflow-wrap:break-word; }
+    .wish-ticket p { overflow-wrap:break-word; }
+    @media (max-width:500px) {
+      .poster-header h2 { font-size:clamp(30px,9.5vw,48px); }
+      .header-sticker { top:4px; right:-3px; width:48px; height:48px; }
+    }
+</style>
+</head>
+<body>
+  <div class="scenery" aria-hidden="true"></div>
+  <header class="topbar">
+    <button class="sound" id="sound-toggle" type="button" aria-pressed="false" aria-label="Ouvir música de fundo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 18V5l11-2v13M9 7l11-2"/><ellipse cx="6" cy="18" rx="3" ry="2.5"/><ellipse cx="17" cy="16" rx="3" ry="2.5"/></svg>
+      <span id="sound-label">Ouvir música</span>
+    </button>
+  </header>
+
+
+  <audio id="background-music" loop preload="metadata" src="assets/musica.mp3"></audio>
+
+  <main>
+    <section class="welcome" id="welcome" aria-label="Seu scrapbook de aniversário">
+      <h1 class="sr-only">Um scrapbook de aniversário para a minha amiga</h1>
+      <div class="album-area">
+        <button class="album" id="open-album" type="button" aria-label="Abrir nosso scrapbook de aniversário">
+          <span class="album-pages" aria-hidden="true"></span>
+          <span class="album-inside" aria-hidden="true"><span>Feliz aniversário.<br>Com carinho, para você. ♡</span></span>
+          <span class="album-cover" aria-hidden="true">
+            <span class="album-spine"></span>
+            <span class="cover-title">Feliz<br><em>aniversário!</em></span>
+            <span class="cover-photo"><img src="assets/photo-05.jpg" id="cover-photo" alt="" width="163" height="163"></span>
+            <span class="character-sticker ghibli-totoro cover-sticker"></span>
+          </span>
+          <span class="binding one" aria-hidden="true"></span><span class="binding two" aria-hidden="true"></span><span class="binding three" aria-hidden="true"></span><span class="binding four" aria-hidden="true"></span>
+        </button>
+      </div>
+    </section>
+
+    <article class="scrapbook" id="scrapbook" hidden aria-labelledby="birthday-heading">
+      <div class="paper-topline">
+        <button class="fold-button" id="fold-letter" type="button">Fechar o scrapbook</button>
+      </div>
+      <header class="poster-header">
+        <p class="eyebrow">hoje é dia de celebrar</p>
+        <h2 id="birthday-heading" tabindex="-1">Feliz<br>aniversário!!!</h2>
+        <span class="character-sticker ghibli-calcifer header-sticker" role="img" aria-label="Adesivo de Calcifer, de Castelo Animado"></span>
+        <p class="dedication">Que este novo capítulo te traga muita paz, saúde, sucesso, felicidade e carinho boiola!!</p>
+      </header>
+
+      <section class="gallery-section" aria-label="Oito lembranças da nossa amizade">
+        <header class="gallery-heading"><h3>Coisas que eu guardaria pra sempre</h3><p>As melhores lembranças quase nunca cabem em uma foto.</p></header>
+        <div class="gallery-grid">
+<div class="memory"><button class="polaroid" type="button" data-photo="0" data-photo-title="Lembrança 01" aria-label="Ampliar foto 01"><img id="photo-01" src="assets/photo-01.jpg" alt="Três amigos sorrindo em um passeio ao ar livre" width="1168" height="638" decoding="async"></button><span class="character-sticker ghibli-totoro photo-sticker" role="img" aria-label="Adesivo de Totoro"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="1" data-photo-title="Lembrança 02" aria-label="Ampliar foto 02"><img id="photo-02" src="assets/photo-02.jpg" alt="Três amigos com capas de chuva em um evento à noite" width="843" height="987" decoding="async"></button><span class="character-sticker ghibli-calcifer photo-sticker" role="img" aria-label="Adesivo de Calcifer"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="2" data-photo-title="Lembrança 03" aria-label="Ampliar foto 03"><img id="photo-03" src="assets/photo-03.jpg" alt="Selfie de dois amigos dentro de um carro à noite" width="1085" height="817" decoding="async"></button><span class="character-sticker ghibli-mini photo-sticker" role="img" aria-label="Adesivo de Totoro pequeno"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="3" data-photo-title="Lembrança 04" aria-label="Ampliar foto 04"><img id="photo-04" src="assets/photo-04.jpg" alt="Dois amigos fazendo careta durante uma viagem de ônibus" width="1108" height="796" decoding="async"></button><span class="character-sticker ghibli-turnip photo-sticker" role="img" aria-label="Adesivo de Cabeça de Nabo"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="4" data-photo-title="Lembrança 05" aria-label="Ampliar foto 05"><img id="photo-05" src="assets/photo-05.jpg" alt="Três amigos sorrindo perto de uma roda-gigante" width="765" height="661" decoding="async"></button><span class="character-sticker ghibli-totoro photo-sticker" role="img" aria-label="Adesivo de Totoro"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="5" data-photo-title="Lembrança 06" aria-label="Ampliar foto 06"><img id="photo-06" src="assets/photo-06.jpg" alt="Dois amigos sorrindo em um passeio à noite" width="839" height="1037" decoding="async"></button><span class="character-sticker ghibli-calcifer photo-sticker" role="img" aria-label="Adesivo de Calcifer"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="6" data-photo-title="Lembrança 07" aria-label="Ampliar foto 07"><img id="photo-07" src="assets/photo-07.jpg" alt="Duas amigas em um local com quadros de músicos" width="1800" height="1350" decoding="async"></button><span class="character-sticker ghibli-mini photo-sticker" role="img" aria-label="Adesivo de Totoro pequeno"></span></div>
+<div class="memory"><button class="polaroid" type="button" data-photo="7" data-photo-title="Lembrança 08" aria-label="Ampliar foto 08"><img id="photo-08" src="assets/photo-08.jpg" alt="Selfie de dois amigos durante uma viagem de ônibus" width="1800" height="1350" decoding="async"></button><span class="character-sticker ghibli-turnip photo-sticker" role="img" aria-label="Adesivo de Cabeça de Nabo"></span></div>
+</div>
+
+        <aside class="memory-note"><p>Eu sempre vou guardar com carinho todas as nossas lembranças e tudo que vc faz por mim, amo fazer parte da sua vida &lt;3</p></aside>
+      </section>
+
+      <section class="letter-section" aria-label="Uma carta de aniversário para a minha amiga">
+        <h3 class="letter-to">eu espero que goste, fiz de coração...</h3>
+        <div class="letter-copy">
+          <p>Oiii Pimps, finalmente chegou!!! Feliz aniversário, veyyy!!! Muitos anos de vida, muita saúde, muito sucesso, muita paz e muita felicidade. E muita paciência pra continuar me aguentando também, porque infelizmente o presente é seu, mas quem ganhou vc fui eu KASDKADKASD.</p>
+          <p>Eu queria falar um pouquinho contigo, e quando eu digo um pouquinho vc já sabe que provavelmente vem um documento inteiro, mas hoje eu tenho uma desculpa muito boa. É mais um ano da sua vida, mais um aniversário que eu tenho a oportunidade de passar perto de ti, e eu não queria deixar esse dia passar sem tentar colocar em palavras pelo menos uma parte do quanto vc é especial pra mim.</p>
+          <p>Eu de verdade fico muito feliz podendo passar mais um ano do seu lado. Feliz por ter te conhecido, por ter me aproximado de vc, por ter encontrado uma amizade tão bonita e por poder continuar fazendo parte da sua vida. Às vezes eu paro pra pensar em como a gente chegou até aqui, em tudo que já conversou, em tudo que já viveu, e fico impressionado com o tamanho do lugar que vc conquistou dentro de mim.</p>
+          <p>Nesse tempo, eu vi e aprendi muita coisa contigo. Vi suas conquistas, suas dificuldades, sua dedicação, seus momentos de felicidade e os momentos em que vc precisava de um pouco mais de carinho. Vi vc enfrentar coisas difíceis, tentar mesmo estando cansada, continuar mesmo estando insegura. E, em tudo isso, fui conhecendo cada vez mais essa pessoa incrível que vc é, uma pessoa que eu admiro por tantos motivos que nem sei se conseguiria colocar todos aqui.</p>
+          <p>E hoje eu queria começar falando de vc. Do seu jeito, da sua inteligência, do seu coração, da sua risada, da sua capacidade de se importar com as pessoas. Porque eu poderia passar horas falando sobre tudo que vc fez por mim, e provavelmente vou falar bastante KASDKADK, mas eu quero que vc saiba que meu carinho por ti também está nas coisas que eu percebo quando só fico te ouvindo, te vendo falar do que gosta, contando alguma coisa do seu dia ou sendo completamente vc.</p>
+          <p>Eu amo quando vc se empolga com alguma coisa. Amo ouvir suas opiniões, suas histórias, suas explicações e até as curiosidades de engenharia que eu provavelmente nunca saberia se não tivesse te conhecido. Amo seu humor, nossas brincadeiras, as coisas idiotas que fazem a gente rir e que, se outra pessoa visse, talvez não entendesse absolutamente nada. Tem tanta coisa no seu jeito que faz eu pensar “vey, eu tenho muita sorte de ter vc na minha vida”.</p>
+          <p>Vc é engraçada, inteligente, carinhosa, dedicada e tem um coração que eu admiro demais. Eu sei que vc tem suas inseguranças, seus dias difíceis, suas dúvidas e seus defeitos, como qualquer pessoa. E eu gosto de poder te conhecer assim também, de verdade, porque meu amor por ti inclui a pessoa inteira. A Pimps animada, a Pimps cansada, a Pimps que quer conversar por horas e a Pimps que só quer um pouco de paz. Todas elas têm um lugar muito especial comigo.</p>
+          <p>Eu queria muito que, nesse aniversário, vc conseguisse sentir o quanto é amada. Que pudesse olhar ao seu redor e perceber quantas pessoas ficam felizes por ter vc na vida delas. E, da minha parte, eu queria conseguir te entregar uma certeza bem grande: eu sou muito, muito feliz por ter vc na minha.</p>
+          <p>Vc me ajudou quando eu precisava e até em momentos em que eu nem sabia direito do que precisava. Me ouviu quando eu estava confuso, teve paciência quando eu estava ansioso, me acolheu quando eu não sabia explicar o que estava sentindo. Vc cuidou de feridas que não tinha causado e me deu carinho em lugares onde eu já estava acostumado a esperar bem menos. São coisas que eu guardo comigo, mesmo quando eu não consigo agradecer direito na hora.</p>
+          <p>Às vezes vc fez isso com uma conversa enorme. Outras vezes foi com uma mensagem, uma brincadeira ou só ficando ali comigo. E eu acho muito especial o jeito como tantas coisas simples entre a gente acabaram significando tanto pra mim. Vc talvez tenha pensado que estava só me fazendo companhia, mas eu estava sentindo que podia respirar um pouco melhor, que podia falar sem medo e que tinha alguém querendo me entender.</p>
+          <p>Se eu fosse tentar descrever o que vc significa pra mim, eu ainda pensaria em segurança. Em carinho, conforto, felicidade e família também, mas segurança continua sendo uma palavra muito importante. Com vc eu encontrei espaço pra ser sincero sobre o que sinto, pra falar das coisas que me machucam, pra celebrar as coisas que me deixam feliz e pra existir sem precisar encontrar a frase perfeita o tempo inteiro.</p>
+          <p>Vc me ajudou a confiar um pouco mais em mim. A entender melhor o que eu sinto. A perceber que eu posso ser querido pelo meu jeito, pela minha companhia, por quem eu sou. E é muito bonito pensar que isso foi acontecendo através da nossa amizade, nas conversas e nos momentos que a gente foi dividindo, muitas vezes sem perceber o quanto estavam mudando as coisas.</p>
+          <p>Quando vc falou sobre eu fazer parte da sua família, vc sabe o quanto isso mexeu comigo. Talvez eu ainda nem tenha conseguido explicar tudo. Família sempre foi uma questão complicada pra mim, então ouvir aquilo de vc me trouxe uma felicidade muito grande. Eu fiquei pensando no que significava ter esse lugar contigo, ser lembrado, ser incluído, saber que minha presença era bem-vinda. É uma dessas coisas que eu vou guardar por muito, muito tempo.</p>
+          <p>Porque vc virou minha melhor amiga, minha irmã, minha família. E eu amo a intimidade que a gente criou, amo poder dividir coisas importantes contigo e também poder mandar uma besteira completamente sem sentido porque sei que vc vai entender. Amo que na nossa amizade cabe uma conversa séria sobre a vida e, pouco depois, alguma idiotice que faz a gente perder toda a postura KASDKADKASD.</p>
+          <p>Eu amo nossos momentos. Nossas conversas, nossas risadas, nossas viagens, nossas brincadeiras, os desabafos e até os silêncios. Amo as coisas que a gente planeja e as que simplesmente acontecem. Tem momentos contigo que talvez pareçam pequenos quando eu tento contar pra alguém, mas que, pra mim, são enormes. Porque eu lembro de como me senti, de como foi bom estar ali, de como eu queria que aquele tempo durasse um pouco mais.</p>
+          <p>E eu quero muito continuar criando essas memórias contigo. Quero mais viagens, mais conversas que começam com um assunto e terminam em outro completamente diferente, mais risadas de coisas idiotas e mais dias que a gente vai lembrar depois com carinho. Quero poder olhar pra trás daqui a muitos anos e perceber que ainda temos um monte de histórias pra contar, inclusive algumas que vão fazer a gente se perguntar como conseguiu ser tão sem noção.</p>
+          <p>Sonho muito em morar aí no Rio, perto de vc. Quando penso nisso, penso nas coisas simples que a gente poderia fazer com mais frequência, se ver, sair, conversar, fazer companhia um pro outro e às vezes só não fazer absolutamente nada juntos. Eu fico muito feliz imaginando poder participar mais do seu dia a dia, conhecer mais dos seus momentos e ter vc por perto também nos meus.</p>
+          <p>Mas hoje eu quero principalmente pensar no seu novo ano. Em tudo que eu desejo pra ti, em tudo que espero que vc possa viver e sentir. Eu quero que esse seja um ano com motivos bons pra sorrir, com oportunidades que te animem, com descobertas, com gente que te faça bem e com momentos em que vc consiga parar e pensar “eu tô feliz”.</p>
+          <p>Quero que vc tenha saúde, paz e tempo pra aproveitar a vida. Que consiga descansar sem ficar pensando em todas as coisas que ainda precisa resolver. Que tenha dias leves, noites tranquilas, passeios bons, conversas gostosas e felicidade nessas coisas pequenas que acabam fazendo tanta diferença. Quero que vc possa se divertir, se permitir viver coisas novas e ter lembranças lindas desse ano que está começando pra ti.</p>
+          <p>Eu sei o quanto vc se dedica. Sei o quanto se cobra, o quanto se esforça e o quanto algumas coisas ficam pesadas porque vc quer fazer tudo dar certo. E eu espero que, nesse novo ano, vc consiga reconhecer mais o que já fez, porque eu vejo tanta coisa em ti da qual sinto orgulho. Às vezes vc está tão preocupada com o próximo desafio que parece que nem dá tempo de olhar pra tudo que acabou de enfrentar.</p>
+          <p>Eu tenho uma confiança enorme no seu futuro. Fico feliz imaginando sua formatura, sua carreira, vc trabalhando com o que estudou tanto pra aprender e conquistando as coisas que hoje ainda parecem distantes. Eu acredito demais na engenheira que vc vai se tornar.</p>
+          <p>E eu espero que vc sinta orgulho de si durante esse caminho também. Que consiga perceber sua inteligência e sua dedicação mesmo quando uma prova for difícil, quando uma matéria te estressar ou quando as coisas demorarem mais do que vc queria. Eu conheço o quanto vc é capaz e quero estar aqui pra te lembrar disso quando sua ansiedade tentar te convencer de outra coisa.</p>
+          <p>Também quero que vc saiba que pode contar comigo. Eu espero ter conseguido te dar um pouco do carinho que vc me deu, e quero continuar aprendendo a ser um amigo cada vez melhor pra ti. Quero te ouvir com atenção, entender o que vc precisa, te fazer companhia e estar presente de um jeito que te faça bem. Vc é muito importante pra mim, e eu quero que isso apareça nas minhas atitudes também.</p>
+          <p>Se vc quiser desabafar, eu quero te ouvir. Se quiser reclamar, eu reclamo junto. Se quiser comemorar alguma coisa, eu quero saber de todos os detalhes. Se estiver cansada e só quiser companhia, eu fico contigo. E se precisar do seu espaço, eu quero saber respeitar isso também. Quero que nossa amizade continue sendo um lugar onde vc se sinta à vontade pra dizer o que sente e o que precisa.</p>
+          <p>Eu quero estar perto das suas conquistas e dos dias comuns também. Saber como foi seu dia, o que te fez rir, o que te irritou, o que vc descobriu e o que está querendo fazer. Acho que tem muito amor nessas coisas. Em prestar atenção, lembrar, perguntar depois, se importar com aquilo porque é importante pra pessoa que a gente ama. E eu amo poder conhecer a sua vida assim, nos detalhes que vc divide comigo.</p>
+          <p>Eu sei que sou inseguro às vezes, que fico ansioso, que me atrapalho tentando explicar algumas coisas e que posso repetir um assunto mais do que precisava. Mas espero que, no meio de tudo isso, vc consiga sentir meu carinho por ti. Eu quero continuar crescendo, aprendendo e cuidando dessa amizade, porque ela tem um valor enorme pra mim. Tudo que a gente construiu merece esse cuidado.</p>
+          <p>E eu espero que vc receba muito carinho nesse novo ano, Pimps. Que as pessoas prestem atenção em vc, te escutem, valorizem sua presença e celebrem suas conquistas. Que vc encontre apoio quando precisar e tenha com quem dividir as coisas boas também. Eu fico muito feliz pensando em vc sendo bem cuidada, sendo amada e tendo motivos pra se sentir segura e feliz.</p>
+          <p>Eu queria poder te emprestar meus olhos por um pouquinho, só pra vc entender como eu te vejo. Pra perceber o carinho com que eu lembro das nossas memórias, o orgulho que sinto quando vc me conta uma conquista e a felicidade que é ouvir sua risada. Acho que vc entenderia por que eu fico tão boiola escrevendo essas coisas e por que, mesmo depois de tantos textos, eu ainda sinto que ficou faltando alguma coisa.</p>
+          <p>Porque sempre parece que falta. Eu escrevo que te amo, que sou grato, que vc é especial, e tudo isso é verdade, mas aí lembro de mais uma conversa, mais uma coisa que vc fez, mais um momento que foi importante pra mim. Acho que vou passar muitos aniversários ainda tentando encontrar um jeito de explicar tudo, e vc vai ter que conviver com isso kasdksadkad.</p>
+          <p>Mas hoje eu queria que vc guardasse principalmente isso: eu amo vc e amo fazer parte da sua vida. Amo a pessoa que conheci e amo continuar te conhecendo, vendo seus planos mudarem, seus sonhos crescerem e suas conquistas chegarem. Quero estar aqui pra acompanhar muitos capítulos seus e espero que a gente ainda tenha muito tempo, muita conversa e muita história pela frente, e saiba que tudo que disse pra mim, TUDO, eu vou sempre levar comigo na minha vida, não importa aonde vc esteja ou onde eu esteja.</p>
+          <p>Obrigado por confiar em mim, por dividir suas coisas comigo, por me acolher e por me deixar chegar tão perto. Obrigado pelas risadas, pela paciência, pelo carinho e por todas as vezes em que sua companhia fez meu dia ficar melhor. Eu guardo tudo isso com muito amor. Ter vc como minha melhor amiga é uma das maiores sortes que eu já tive.</p>
+          <p>Feliz aniversário, minha Pimps. Eu desejo que vc viva muita coisa bonita, que realize sonhos que já tem e descubra outros pelo caminho. Que seja feliz na sua carreira, nas suas amizades, nos seus planos e no seu dia a dia. Que tenha coragem pra ir atrás do que quer e carinho por si mesma enquanto tenta. E que hoje vc consiga aproveitar cada pedacinho desse dia e sentir o quanto sua vida é querida.</p>
+          <p>Eu tô muito feliz por poder celebrar mais um aniversário seu. Espero que ainda venham muitos outros, com a gente mais velha, com mais histórias, com a vida diferente em um monte de coisas e com essa amizade continuando a encontrar espaço em tudo isso.</p>
+          <p>Eu te amo muito, boiola. Vc é minha melhor amiga, minha irmã e uma parte muito especial da minha família. Pode ter certeza de que tem alguém aqui torcendo demais por ti e ficando feliz só de imaginar todas as coisas boas que vc ainda vai viver.</p>
+          <p>Feliz aniversário, veyyy. Obrigado por ser vc e por dividir tanto da sua vida comigo. Eu te amo de todo o meu coração. ❤️</p>
+        </div>
+        <p class="signature"><span>com todo amor e carinho,</span> Valente &lt;3</p>
+        <span class="letter-margin" aria-hidden="true">para reler nos dias em que precisar de um abraço</span>
+      </section>
+
+      <section class="wish-section" aria-label="Um último desejo">
+        <button class="wish-button" id="wish-button" type="button" aria-expanded="false" aria-controls="wish-ticket"><span aria-hidden="true">✧</span> Um último desejo</button>
+        <div class="wish-ticket" id="wish-ticket" hidden><p>quero que sempre faça parte da minha vida, e nunca mude a pessoa incrível que vc é</p></div>
+      </section>
+    </article>
+    <p class="page-footer" id="page-footer" hidden>Ainda temos tantas páginas bonitas pela frente.</p>
+  </main>
+
+  <dialog class="photo-dialog" id="photo-dialog" aria-labelledby="photo-title">
+    <div class="dialog-top"><h3 id="photo-title"></h3><button class="close-photo" id="close-photo" type="button" aria-label="Fechar fotografia">×</button></div>
+    <img id="large-photo" alt="">
+  </dialog>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+  <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+
+  <script>
+    'use strict';
+    // Fotos e música servidas por arquivos públicos do projeto.
+    const byId = id => document.getElementById(id);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const welcome = byId('welcome');
+    const scrapbook = byId('scrapbook');
+    let opening = false;
+    let openingTimer;
+    let userMuted = false;
+
+    // O clique para abrir o álbum permite iniciar a música no navegador.
+    const music = (() => {
+      const audio = byId('background-music');
+      const toggle = byId('sound-toggle');
+      let requested = false, intent = 0;
+      audio.volume = .35;
+      function update() {
+        const playing = !audio.paused && !audio.ended;
+        toggle.setAttribute('aria-pressed', String(playing));
+        const label = playing ? 'Pausar música' : requested ? 'Carregando música…' : 'Ouvir música';
+        toggle.setAttribute('aria-label', label);
+        byId('sound-label').textContent = label;
+      }
+      async function start() {
+        const currentIntent = ++intent;
+        requested = true;
+        update();
+        try {
+          await audio.play();
+          if (currentIntent !== intent) {
+            if (!requested) audio.pause();
+            return;
+          }
+          update();
+        } catch (error) {
+          if (currentIntent !== intent) return;
+          requested = false;
+          update();
+          byId('announcement').textContent = 'Toque em Ouvir música para iniciar o áudio.';
+        }
+      }
+      function pause() {
+        intent++;
+        requested = false;
+        audio.pause();
+        update();
+      }
+      audio.addEventListener('playing', update);
+      audio.addEventListener('pause', () => { requested = false; update(); });
+      audio.addEventListener('error', () => {
+        requested = false;
+        update();
+        byId('announcement').textContent = 'Não foi possível carregar a música neste navegador.';
+      });
+      return { start, pause, get playing() { return !audio.paused && !audio.ended; }, get requested() { return requested; } };
+    })();
+
+
+    function celebrate() {
+      if (reducedMotion.matches) return;
+      const canvas = byId('confetti');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      if (canvas.frame) cancelAnimationFrame(canvas.frame);
+      const width = innerWidth, height = innerHeight;
+      canvas.width = width * Math.min(devicePixelRatio || 1,2);
+      canvas.height = height * Math.min(devicePixelRatio || 1,2);
+      ctx.scale(canvas.width/width,canvas.height/height);
+      const colors = ['#ee8738','#42694e','#bedee8','#ffc276','#e2ebd4'];
+      const particles = Array.from({ length:65 },() => ({ x:width/2,y:Math.min(height*.34,270),vx:(Math.random()-.5)*11,vy:-3-Math.random()*7,size:3+Math.random()*5,rotation:Math.random()*Math.PI,color:colors[Math.floor(Math.random()*colors.length)] }));
+      const start = performance.now();
+      let previous = start;
+      function draw(now) {
+        const step = Math.min((now-previous)/16.67,2); previous=now;
+        ctx.clearRect(0,0,width,height);
+        const opacity = Math.max(0,1-(now-start)/3000);
+        particles.forEach(p => {
+          p.x += p.vx*step; p.y += p.vy*step; p.vy += .085*step; p.rotation += .045*step;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rotation); ctx.globalAlpha=opacity;
+          ctx.fillStyle=p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.55); ctx.restore();
+        });
+        if (now-start < 3000) canvas.frame=requestAnimationFrame(draw);
+        else { ctx.clearRect(0,0,width,height); canvas.frame=null; }
+      }
+      canvas.frame=requestAnimationFrame(draw);
+    }
+
+    function revealLetter() {
+      welcome.hidden=true;
+      welcome.classList.remove('opening');
+      scrapbook.hidden=false;
+      byId('page-footer').hidden=false;
+      scrapbook.classList.add('unfold');
+      window.scrollTo({ top:0,behavior:'instant' });
+      byId('birthday-heading').focus({ preventScroll:true });
+      byId('announcement').textContent='Seu scrapbook de aniversário está aberto.';
+      opening=false;
+      celebrate();
+    }
+    function openLetter() {
+      if (opening || !scrapbook.hidden) return;
+      opening=true;
+      if (!userMuted) music.start();
+      byId('open-album').disabled=true;
+      if (reducedMotion.matches) revealLetter();
+      else { welcome.classList.add('opening'); openingTimer=window.setTimeout(revealLetter,1800); }
+    }
+    byId('open-album').addEventListener('click',openLetter);
+    byId('fold-letter').addEventListener('click',() => {
+      clearTimeout(openingTimer); opening=false;
+      scrapbook.hidden=true; scrapbook.classList.remove('unfold');
+      byId('page-footer').hidden=true;
+      welcome.hidden=false; welcome.classList.remove('opening');
+      byId('open-album').disabled=false;
+      byId('wish-ticket').hidden=true; byId('wish-button').setAttribute('aria-expanded','false');
+      window.scrollTo({ top:0,behavior:'instant' });
+      byId('open-album').focus({ preventScroll:true });
+      byId('announcement').textContent='O scrapbook foi fechado. Você pode abrir de novo.';
+    });
+    byId('sound-toggle').addEventListener('click',() => {
+      if (music.requested) { userMuted=true; music.pause(); }
+      else { userMuted=false; music.start(); }
+    });
+
+    document.addEventListener('visibilitychange',() => {
+      if (document.hidden && music.playing) { userMuted=true; music.pause(); }
+    });
+    byId('wish-button').addEventListener('click',() => {
+      const ticket=byId('wish-ticket');
+      const reveal=ticket.hidden;
+      ticket.hidden=!reveal;
+      byId('wish-button').setAttribute('aria-expanded',String(reveal));
+      if (reveal) {
+        celebrate();
+        byId('announcement').textContent='quero que sempre faça parte da minha vida, e nunca mude a pessoa incrível que vc é';
+        ticket.scrollIntoView({ block:'nearest',behavior:reducedMotion.matches ? 'instant' : 'smooth' });
+      }
+    });
+    byId('cover-photo').src=byId('photo-05').src;
+    const dialog=byId('photo-dialog');
+    document.querySelectorAll('[data-photo]').forEach(button => {
+      button.addEventListener('click',() => {
+        const original=button.querySelector('img');
+        byId('large-photo').src=original.src;
+        byId('large-photo').alt=original.alt;
+        byId('photo-title').textContent=button.dataset.photoTitle;
+        dialog.showModal();
+      });
+    });
+    byId('close-photo').addEventListener('click',() => dialog.close());
+    dialog.addEventListener('click',event => {
+      const rect=dialog.getBoundingClientRect();
+      if (event.clientX<rect.left || event.clientX>rect.right || event.clientY<rect.top || event.clientY>rect.bottom) dialog.close();
+    });
+  </script>
+</body>
+</html>
